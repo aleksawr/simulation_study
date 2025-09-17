@@ -32,13 +32,10 @@ The study reproduces, in simplified form, central ideas discussed in *Beyond the
 
     -   It is the most common method of linear regression, where coefficients are chosen to minimize the sum of squared residuals:
 
-        $$
-        Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_pX_p + \varepsilon
-        $$
+$$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_pX_p + \varepsilon$$  
 
-        $$
-        \text{minimize } \sum (Y - \hat{Y})^2
-        $$
+$$\text{minimize } \sum (Y - \hat{Y})^2$$
+
 
     -   **In regression theory:** measurement error in predictors attenuates regression coefficients and lowers $R^2$.\
 
