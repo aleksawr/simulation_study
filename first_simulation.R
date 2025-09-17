@@ -11,8 +11,8 @@ set.seed(12345)
 
 # ----------------------- User settings -----------------------
 N            <- 1000                 # sample size
-p            <- 4                    # number of true predictors
-r_betweenX   <- 0.00                 # correlation among latent predictors (0 for simplest start)
+p            <- 4                    # number of relevant predictors
+r_betweenX   <- 0.00                 # correlation among latent predictors (0 for easier start?)
 beta         <- c(0.6, 0.5, 0.4, 0.3)# true effects for X* -> Y (length must be p)
 R2_target    <- 0.50                 # true R^2 in the latent model (Y on X*)
 rho_grid     <- c(0.6, 0.8, 1.0)     # ONLY factor we vary (predictor reliability)
@@ -154,3 +154,4 @@ if (make_plot) {
 # Empirical reliability proxy for X1 (Var(X1*) ~ 1): cor(X1, X1_latent)^2
 dat_check <- simulate_once(N, p, r_betweenX, beta, R2_target, rho_X = rho_grid[1])
 cor(dat_check$X1, dat_check$X1_latent)^2
+
