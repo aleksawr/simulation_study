@@ -5,3 +5,5 @@ source("scripts/01_simulate.R")
 source("scripts/02_train.R")
 source("scripts/03_validate.R")
 
+source("scripts/plots.R")
+source("scripts/cleanup.R")
