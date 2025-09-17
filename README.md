@@ -135,23 +135,6 @@ Together, RMSE and R² capture complementary aspects of model performance:
 
 Both metrics highlight the consequences of measurement error: even flexible machine learning models cannot achieve high predictive performance when predictor reliability is low.
 
-------------------------------------------------------------------------
-
-
-## Results
-
-The simulations demonstrate the following:
-
--   **Effect of measurement error**\
-    Lower reliability reduces the strength of observed predictor–outcome associations.
-    -   Regression coefficients are attenuated toward zero.
-    -   Out-of-sample R² declines systematically as reliability decreases.
--   **Comparison of models**\
-    Both OLS and XGBoost are constrained by predictor reliability.
-    -   Machine learning cannot recover information lost due to measurement error.
-    -   Gains from complex models are limited when predictors themselves are noisy.
--   **Perfect reliability benchmark**\
-    At ρ = 1.0, observed estimates align closely with the latent data-generating model, providing a baseline for comparison.
 
 ------------------------------------------------------------------------
 
