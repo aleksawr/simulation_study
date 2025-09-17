@@ -8,7 +8,6 @@ The study reproduces, in simplified form, central ideas discussed in *Beyond the
 
 ## Contents
 
-
 -   **01_simulate.R**\
     Generates synthetic datasets for analysis. Specifically:
 
@@ -32,53 +31,51 @@ The study reproduces, in simplified form, central ideas discussed in *Beyond the
 -   **03_validate.R**\
     Evaluates predictive performance and aggregates results. Specifically:
 
-    -   Loads prediction files and compares predicted values to true outcomes.\
-    -   Computes two performance metrics: RMSE and R².\
-    -   Indicates the proportion of variance in Y explained by predictions.\
-    -   Saves detailed results per dataset (`perf_by_dataset.csv`).\
-    -   Aggregates results across replicates by reliability and model (`perf_agg.csv`).\
+    -   Loads prediction files and compares predicted values to true outcomes.
+    -   Computes two performance metrics: RMSE and R².
+    -   Indicates the proportion of variance in Y explained by predictions.
+    -   Saves detailed results per dataset (`perf_by_dataset.csv`).
+    -   Aggregates results across replicates by reliability and model (`perf_agg.csv`).
     -   Creates a simple plot (`R2_vs_rhoX.png`) showing how predictive R² depends on predictor reliability.
 
 
 -   **scripts/utils_pilot.R**\
     Contains helper functions used across scripts:
 
-    -   `make_corr()` – builds correlation matrices for latent predictors.\
-    -   `rmvnorm_simple()` – generates multivariate normal data.\
-    -   `compute_sigma_for_R2()` – determines error variance to achieve the target latent R².\
+    -   `make_corr()` – builds correlation matrices for latent predictors.
+    -   `rmvnorm_simple()` – generates multivariate normal data.
+    -   `compute_sigma_for_R2()` – determines error variance to achieve the target latent R².
     -   `train_test_idx()` – creates reproducible train/test splits.
 
 
 -   **data/**\
     Project output directory, with subfolders:
 
-    -   `data/sim/` – simulated datasets + manifest.\
-    -   `data/pred/` – prediction outputs + index.\
+    -   `data/sim/` – simulated datasets + manifest.
+    -   `data/pred/` – prediction outputs + index.
     -   `data/out/` – validation results and plots.
 
 ------------------------------------------------------------------------
-
 
 ## How to Run
 
 1.  Run **`01_simulate.R`** to generate synthetic datasets.
     -   Main settings:
-        -   `N`: number of observations (sample size).\
-        -   `p`: number of predictors.\
-        -   `r_betweenX`: correlation among latent predictors (0 = independent; 0.40 = moderately correlated).\
-        -   `beta`: true regression coefficients for latent predictors.\
-        -   `R2_target`: desired proportion of variance explained in the latent outcome model.\
-        -   `rho_grid`: reliability levels to simulate (e.g., 0.60, 0.80, 1.00).\
-        -   `replicates`: number of datasets to generate per reliability level.\
+        -   `N`: number of observations (sample size).
+        -   `p`: number of predictors.
+        -   `r_betweenX`: correlation among latent predictors (0 = independent; 0.40 = moderately correlated).
+        -   `beta`: true regression coefficients for latent predictors.
+        -   `R2_target`: desired proportion of variance explained in the latent outcome model.
+        -   `rho_grid`: reliability levels to simulate (e.g., 0.60, 0.80, 1.00).
+        -   `replicates`: number of datasets to generate per reliability level.
     -   Outputs: datasets in `data/sim/` and `manifest.csv`.
 2.  Run **`02_train.R`** to train models and save predictions.
-    -   Models: OLS always, XGBoost optional.\
+    -   Models: OLS always, XGBoost optional.
     -   Outputs: per-dataset prediction files in `data/pred/` and `pred_index.csv`.
 3.  Run **`03_validate.R`** to compute metrics and visualize results.
     -   Outputs: per-dataset performance (`perf_by_dataset.csv`), aggregated results (`perf_agg.csv`), and R² vs reliability plot (`R2_vs_rhoX.png`).
 
 ------------------------------------------------------------------------
-
 
 ## Notation and Theoretical Background
 
@@ -147,26 +144,25 @@ The simulations demonstrate the following:
 
 -   **Effect of measurement error**\
     Lower reliability reduces the strength of observed predictor–outcome associations.
-    -   Regression coefficients are attenuated toward zero.\
+    -   Regression coefficients are attenuated toward zero.
     -   Out-of-sample R² declines systematically as reliability decreases.
 -   **Comparison of models**\
     Both OLS and XGBoost are constrained by predictor reliability.
-    -   Machine learning cannot recover information lost due to measurement error.\
+    -   Machine learning cannot recover information lost due to measurement error.
     -   Gains from complex models are limited when predictors themselves are noisy.
 -   **Perfect reliability benchmark**\
     At ρ = 1.0, observed estimates align closely with the latent data-generating model, providing a baseline for comparison.
 
 ------------------------------------------------------------------------
 
-
 ## Summary
 
 This project illustrates a central psychometric principle:
 **The maximum predictive performance is bounded by the reliability of the predictors.**
 
--   **In regression:** this is seen as *attenuation bias*—coefficients shrink and predictive power decreases when predictors are noisy.
--   **In SEM:** this is modelled explicitly—observed indicators have reliabilities \< 1, and latent factors capture the true scores.
--   **In ML:** the same limits apply—flexible models cannot exceed the information content of the observed data.
+-   **In regression:** this is seen as *attenuation bias* - coefficients shrink and predictive power decreases when predictors are noisy.
+-   **In SEM:** this is modelled explicitly - observed indicators have reliabilities \< 1, and latent factors capture the true scores.
+-   **In ML:** the same limits apply - flexible models cannot exceed the information content of the observed data.
 
 Thus, this project connects **classical measurement theory (regression, SEM)** with **modern predictive modelling (ML)**, showing their common constraint: **measurement error sets the ceiling**.
 
