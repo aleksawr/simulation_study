@@ -38,7 +38,7 @@ The reliability is written as ρ (the Greek letter *rho*).
 
 Reliability can be defined as:
 
-![](reliability_formula.png){width="250"}
+<img src="reliability_formula.png" alt=" " width="300"/>
 
 -   If ρ = 1.0 → perfect measurement (no error).\
 -   If ρ = 0.8 → 80% of the variance in X is true signal, 20% is measurement error.\
