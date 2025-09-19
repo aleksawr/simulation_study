@@ -6,7 +6,7 @@ manifest <- utils::read.csv("data/sim/manifest.csv", stringsAsFactors = FALSE)  
 pred_dir <- "data/pred"                              ## directory to store prediction files
 dir.create(pred_dir, recursive = TRUE, showWarnings = FALSE)                     ## ensure prediction directory exists
 
-use_xgboost <- FALSE  # set TRUE if you have xgboost installed               ## toggle: train optional xgboost model
+use_xgboost <- TRUE  # set TRUE if you have xgboost installed               ## toggle: train optional xgboost model
 
 ## -------- Linear model: fit on train, predict on test --------
 fit_lm_predict <- function(df, test_ratio, seed) {
