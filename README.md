@@ -198,7 +198,7 @@ This makes it easy to see both **average trends** and the **spread of outcomes**
 
     -   At **ρ = 0.6**, distributions are shifted downward, showing that low reliability sharply limits variance explained.\
     -   At **ρ = 1.0**, clouds shift upward, indicating stronger performance closer to the true latent model.\
-    -   **Model comparison:** Regularized linear models (e.g., ENET with interactions) typically achieve higher, more stable R² than GBM in small or noisy samples.
+
 
 -   **Predictive RMSE rainclouds:**
 
@@ -206,7 +206,6 @@ This makes it easy to see both **average trends** and the **spread of outcomes**
 
     -   RMSE decreases systematically as reliability improves, mirroring the R² pattern.\
     -   Distributions are wider at low reliability, indicating instability across replicates.\
-    -   Models differ most clearly at higher reliability, where ENET often maintains lower RMSE than GBM.
 
 **Interpretation:**\
 The plots highlight that **measurement error imposes a ceiling on predictive performance**.
