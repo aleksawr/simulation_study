@@ -105,11 +105,11 @@ This follows psychometric convention where reliability is expressed as ρ (Greek
 
 ------------------------------------------------------------------------
 
-### What is OLS and why is it relevant here?
+### OLS; why is it relevant?
 
 -   **Ordinary Least Squares (OLS)** regression is the most common method of linear regression.
 
--   The model assumes a linear relationship:
+-   It estimates coefficients by minimizing the sum of squared residuals:
 
     $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_pX_p + \varepsilon$$
 
@@ -117,11 +117,17 @@ This follows psychometric convention where reliability is expressed as ρ (Greek
 
     $$\text{minimize } \sum (Y - \hat{Y})^2$$
 
+-   Interpretation of coefficients (from labs):
+
+    β₀ (intercept): expected outcome when predictors = 0.
+
+    β₁ (slope): expected difference in the outcome for a one-unit increase in a predictor, holding others constant
+
 -   **In regression theory:** measurement error in predictors attenuates regression coefficients and lowers $R^2$.
 
 -   **In SEM:** predictors are modeled as latent variables with explicit reliabilities; attenuation is represented in the measurement model.
 
--   **In this project:** OLS provides the baseline model because its behavior under measurement error is well understood. It anchors the simulations in the regression/SEM tradition and sets expectations against which ML models can be compared.
+-   **In this project:** OLS provides the baseline model because its behavior under measurement error is well understood.
 
 ------------------------------------------------------------------------
 
@@ -145,9 +151,7 @@ Predictive performance is evaluated using two standard metrics: **Root Mean Squa
     -   Values closer to 1 indicate stronger predictive performance.
     -   Under measurement error, R² decreases systematically, regardless of sample size or model complexity.
 
-Together, RMSE and R² capture complementary aspects of model performance:
-- RMSE quantifies **absolute prediction error**.
-- R² quantifies **relative explanatory power**.
+Together, RMSE and R² capture complementary aspects of model performance: - RMSE quantifies **absolute prediction error**. - R² quantifies **relative explanatory power**.
 
 Both metrics highlight the consequences of measurement error: even flexible machine learning models cannot achieve high predictive performance when predictor reliability is low.
 
@@ -182,14 +186,38 @@ The simulation study shows how **predictor reliability** ($\rho_{XX'}$) affects 
 
 ------------------------------------------------------------------------
 
+### Raincloud Plots: Distributions of Predictive Performance
+
+To visualize how predictive performance varies across simulation replicates, we use **raincloud plots**.\
+These combine a **density distribution (the “cloud”)**, a **boxplot** (median and interquartile range), and individual **jittered points** (each replicate).\
+This makes it easy to see both **average trends** and the **spread of outcomes** under different levels of predictor reliability.
+
+-   **Predictive R² rainclouds:**
+
+    <img src="data/out/perf_replicates_R2_raincloud.png" alt="Raincloud plot of R2 across replicates" width="700"/>
+
+    -   At **ρ = 0.6**, distributions are shifted downward, showing that low reliability sharply limits variance explained.\
+    -   At **ρ = 1.0**, clouds shift upward, indicating stronger performance closer to the true latent model.\
+    -   **Model comparison:** Regularized linear models (e.g., ENET with interactions) typically achieve higher, more stable R² than GBM in small or noisy samples.
+
+-   **Predictive RMSE rainclouds:**
+
+    <img src="data/out/perf_replicates_RMSE_raincloud.png" alt="Raincloud plot of RMSE across replicates" width="700"/>
+
+    -   RMSE decreases systematically as reliability improves, mirroring the R² pattern.\
+    -   Distributions are wider at low reliability, indicating instability across replicates.\
+    -   Models differ most clearly at higher reliability, where ENET often maintains lower RMSE than GBM.
+
+**Interpretation:**\
+The plots highlight that **measurement error imposes a ceiling on predictive performance**.
+
+------------------------------------------------------------------------
+
 ## Summary
 
 This project illustrates: **The maximum predictive performance is bounded by the reliability of the predictors.**
 
 -   **In regression:** this is seen as *attenuation bias* - coefficients shrink and predictive power decreases when predictors are noisy.
--   **In SEM:** this is modelled explicitly - observed indicators have reliabilities \< 1, and latent factors capture the true scores.
 -   **In ML:** the same limits apply - flexible models cannot exceed the information content of the observed data.
-
-Thus, this project connects **classical measurement theory (regression, SEM)** with **modern predictive modelling (ML)**, showing their common constraint: **measurement error sets the ceiling**.
 
 ------------------------------------------------------------------------
