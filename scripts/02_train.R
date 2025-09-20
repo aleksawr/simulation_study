@@ -10,14 +10,26 @@ use_xgboost <- TRUE  # set TRUE if you have xgboost installed               ## t
 
 ## -------- Linear model: fit on train, predict on test --------
 fit_lm_predict <- function(df, test_ratio, seed) {
-  Xcols <- grep("^X\\d+$", names(df), value = TRUE)  ## select observed predictors X1..Xp
-  idx   <- train_test_idx(nrow(df), test_ratio, seed = seed + 123)             ## reproducible split (seed offset for model)
-  tr    <- df[idx$train, , drop = FALSE]                                       ## training data
-  te    <- df[idx$test,  , drop = FALSE]                                       ## test data
-  fml <- as.formula(paste("Y ~", paste(Xcols, collapse = " + ")))              ## formula: Y ~ X1 + X2 + ... + Xp
-  fit <- lm(fml, data = tr)                                                    ## fit OLS on training set
-  yhat <- predict(fit, newdata = te)                                           ## predict on test set
-  list(y = te$Y, yhat = yhat)                                                  ## return test targets and predictions
+  Xcols <- grep("^X\\d+$", names(df), value = TRUE)      ## select observed predictors (X1..Xp)
+  
+  ## --- get reproducible train/test indices (same helper you already use)
+  idx <- train_test_idx(nrow(df), test_ratio, seed = seed + 123)
+  
+  ## --- split into train/test
+  tr <- df[idx$train, , drop = FALSE]
+  te <- df[idx$test,  , drop = FALSE]
+  
+  ## --- formula: Y ~ X1 + X2 + ...
+  fml <- as.formula(paste("Y ~", paste(Xcols, collapse = " + ")))
+  
+  ## --- fit OLS on TRAIN only
+  fit <- lm(fml, data = tr)
+  
+  ## --- predict on TEST only
+  yhat <- predict(fit, newdata = te)
+  
+  ## --- return only test targets and predictions
+  list(y = te$Y, yhat = yhat)
 }
 
 ## -------- XGBoost: fit on train, predict on test (optional) --------
@@ -77,3 +89,4 @@ index <- do.call(rbind, rows)                                                  #
 utils::write.csv(index, file.path(pred_dir, "pred_index.csv"),                 ## save index so downstream scripts can locate preds
                  row.names = FALSE, fileEncoding = "UTF-8")
 cat("Predictions saved to", pred_dir, "\n")                                    ## final message
+

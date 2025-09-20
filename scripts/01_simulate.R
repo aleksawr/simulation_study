@@ -64,3 +64,4 @@ for (i in seq_along(rho_grid)) {            ## loop over reliability levels
 manifest <- do.call(rbind, man_rows)       ## combine all manifest rows into one data frame
 utils::write.csv(manifest, manifest_fn, row.names = FALSE, fileEncoding = "UTF-8")  ## save manifest
 cat("Wrote", nrow(manifest), "datasets to", out_dir, "\n")  ## print summary message
+
