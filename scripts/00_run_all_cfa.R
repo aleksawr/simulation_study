@@ -5,5 +5,5 @@ source("scripts/01_simulate_cfa.R")
 source("scripts/02_train_cfa.R")
 source("scripts/03_validate_cfa.R")
 
-source("scripts/plots.R")
-source("scripts/cleanup.R")
+source("scripts/plots_cfa.R")
+source("scripts/cleanup_cfa.R")
