@@ -8,100 +8,102 @@ The study reproduces, in simplified form, ideas discussed in *Beyond the Hype: A
 
 ## Contents
 
--   **01_simulate.R**\
-    Generates synthetic datasets for analysis. Specifically:
+-   **01_simulate_cfa.R**\
+    Generates **CFA-style synthetic datasets**. Specifically:
 
-    -   Constructs latent predictors (X\*) according to user-defined correlation structure.
-    -   Produces observed predictors (X) by adding measurement error such that their reliability equals pre-specified values (`rho_X`).
-    -   Creates outcome variables (Y) as linear combinations of the latent predictors with noise adjusted to achieve a target latent R².
-    -   Saves all datasets and writes a **manifest file** (`manifest.csv`) describing dataset ID, reliability, replicate number, seed, and empirical checks.
+    -   Simulates **two correlated latent factors** (F1, F2) with user-defined correlation (`r_F12`).
+    -   Creates **six items** (X1–X6) with simple-structure loadings (`.80, .70, .60`) and residuals chosen for unit variance.
+    -   Constructs an outcome **Y** from the **true factors** with a target latent **R²** (`R2_target_Y`).
+    -   Saves, per replicate:  
+        1) `*_items.csv` with **Y + items**, and  
+        2) `*_latent.csv` with **true factors**.  
+        Also writes a **manifest** (`data/sim_cfa/manifest.csv`) describing dataset ID, loadings, factor correlation, replicate number, seed, and empirical checks.
 
--   **02_train.R**\
-    Trains predictive models on the simulated datasets. Specifically:
+-   **02_train_cfa.R**\
+    Trains predictive models on the CFA datasets. Specifically:
 
-    -   Reads datasets from the manifest.
-    -   Splits each dataset into training and test subsets (default 70/30 split) using reproducible seeds.
-    -   Fits **ordinary least squares (OLS) regression** (`Y ~ X1 + ... + Xp`).
-    -   Optionally, fits a **gradient boosted tree model (XGBoost)** if the package is installed and enabled.
-    -   Saves predictions (true Y and predicted Ŷ for the test set) to CSV files.
-    -   Produces an **index file** (`pred_index.csv`) linking each dataset to its prediction outputs.
+    -   Reads datasets from the manifest and applies a **70/30 train/test split** (reproducible).
+    -   Fits **ordinary least squares (OLS) regression** and, optionally, **gradient boosted trees (XGBoost)** on:
+        -   **Raw items** (`score_type = "items"`).
+        -   **Sum/mean scores** per factor (`"sum"`, mean of X1–X3 for F1 and X4–X6 for F2).
+        -   **CFA factor scores** estimated via `lavaan` (fit on training data only; `score_type = "factor"`).
+    -   Saves predictions (true Y and predicted Ŷ) to CSV files.
+    -   Produces an **index file** (`data/pred_cfa/pred_index.csv`) linking each dataset to its prediction outputs.
 
--   **03_validate.R**\
+-   **03_validate_cfa.R**\
     Evaluates predictive performance and aggregates results. Specifically:
 
     -   Loads prediction files and compares predicted values to true outcomes.
     -   Computes two performance metrics: RMSE and R².
     -   Saves detailed results per dataset (`perf_by_dataset.csv`).
-    -   Aggregates results across replicates by reliability and model (`perf_agg.csv`).
-    -   Creates a simple plot (`R2_vs_rhoX.png`) showing how predictive R² depends on predictor reliability.
+    -   Aggregates results by **model** and by **model × score type** (`perf_agg_by_model.csv`, `perf_agg_by_model_score.csv`).
 
 -   **plots.R**\
-    Produces detailed visualizations of simulation results. Specifically:
+    Produces detailed visualizations of CFA results. Specifically:
 
-    -   Loads aggregated results (`perf_agg.csv`) and replicate-level results (`perf_by_dataset.csv`).
-    -   Generates **facet plots** of R² and RMSE across reliability levels.
+    -   Loads aggregated results (`perf_agg_by_model.csv`, `perf_agg_by_model_score.csv`) and replicate-level results (`perf_by_dataset.csv`).
+    -   Generates **facet plots** of R² and RMSE across score types.
     -   Creates **error bar plots** (mean ± SE across replicates).
-    -   Produces **replicate-level plots** (jitter + boxplot) to display the distribution of predictive performance across replicates.
-    -   Saves all plots to `data/out/` (e.g., `perf_grid.png`, `perf_grid_with_se.png`, `perf_replicates_R2_jitter.png`, `perf_replicates_RMSE_jitter.png`).
+    -   Produces **replicate-level plots** (jitter + boxplot) and **raincloud plots** for the distribution of predictive performance across replicates.
+    -   Saves all plots to `data/out_cfa/` (e.g., `perf_grid_with_se_cfa.png`, `perf_replicates_R2_cfa.png`, `perf_replicates_R2_raincloud_cfa.png`, `perf_replicates_RMSE_cfa.png`, `perf_replicates_RMSE_raincloud_cfa.png`).
 
 -   **cleanup.R**\
     Maintains a tidy project structure. Specifically:
 
     -   Removes bulky intermediate files after simulations are complete.
-    -   In `data/sim/`: keeps only `manifest.csv`, deletes per-replicate datasets.
-    -   In `data/pred/`: keeps only `pred_index.csv`, deletes per-replicate prediction files.
-    -   In `data/out/`: keeps summary metrics (`perf_*.csv`) and plots (`*.png`), removes leftover scratch files.
-    -   Helps keep the repository lightweight and avoids clutter when running many replications.
+    -   In `data/sim_cfa/`: keeps only `manifest.csv`, deletes per-replicate datasets.
+    -   In `data/pred_cfa/`: keeps only `pred_index.csv`, deletes per-replicate prediction files.
+    -   In `data/out_cfa/`: keeps summary metrics (`perf_*.csv`) and plots (`*_cfa.png`), removes leftover scratch files.
 
 -   **scripts/utils_pilot.R**\
     Contains helper functions used across scripts:
 
-    -   `make_corr()` – builds correlation matrices for latent predictors.
-    -   `rmvnorm_simple()` – generates multivariate normal data.
-    -   `compute_sigma_for_R2()` – determines error variance to achieve the target latent R².
     -   `train_test_idx()` – creates reproducible train/test splits.
 
 -   **data/**\
     Project output directory, with subfolders:
 
-    -   `data/sim/` – simulated datasets + manifest.
-    -   `data/pred/` – prediction outputs + index.
-    -   `data/out/` – validation results and plots.
+    -   `data/sim_cfa/` – simulated CFA datasets + manifest.
+    -   `data/pred_cfa/` – prediction outputs + index.
+    -   `data/out_cfa/` – validation results and plots.
 
 ------------------------------------------------------------------------
 
 ## How to Run
 
-1.  Run **`01_simulate.R`** to generate synthetic datasets.
+1.  Run **`01_simulate_cfa.R`** to generate datasets.
     -   Main settings:
-        -   `N`: number of observations (sample size).
-        -   `p`: number of predictors.
-        -   `r_betweenX`: correlation among latent predictors (0 = independent; 0.40 = moderately correlated).
-        -   `beta`: true regression coefficients for latent predictors.
-        -   `R2_target`: desired proportion of variance explained in the latent outcome model.
-        -   `rho_grid`: reliability levels to simulate (e.g., 0.60, 0.80, 1.00).
-        -   `replicates`: number of datasets to generate per reliability level.
-    -   Outputs: datasets in `data/sim/` and `manifest.csv`.
-2.  Run **`02_train.R`** to train models and save predictions.
+        -   `N`: sample size.
+        -   `r_F12`: correlation between F1 and F2.
+        -   `load_F1`, `load_F2`: item loadings.
+        -   `beta_Y`: coefficients for the true regression `Y ~ F1 + F2`.
+        -   `R2_target_Y`: desired latent R².
+        -   `replicates`: number of datasets to generate.
+    -   Outputs: item and latent CSVs + `manifest.csv`.
+
+2.  Run **`02_train_cfa.R`** to train models and save predictions.
     -   Models: OLS always, XGBoost optional.
-    -   Outputs: per-dataset prediction files in `data/pred/` and `pred_index.csv`.
-3.  Run **`03_validate.R`** to compute metrics and visualize results.
-    -   Outputs: per-dataset performance (`perf_by_dataset.csv`), aggregated results (`perf_agg.csv`), and R² vs reliability plot (`R2_vs_rhoX.png`).
+    -   Score types: items, sum, factor.
+    -   Outputs: per-dataset prediction files in `data/pred_cfa/` and `pred_index.csv`.
+
+3.  Run **`03_validate_cfa.R`** and **plots.R** to compute metrics and visualize results.
+    -   Outputs: performance metrics (`perf_by_dataset.csv`, `perf_agg_by_model.csv`, `perf_agg_by_model_score.csv`) and plots in `data/out_cfa/`.
 
 ------------------------------------------------------------------------
 
 ## Notation and Theoretical Background
 
-In the code, **`rho_X`** denotes predictor reliability.\
-This follows psychometric convention where reliability is expressed as ρ (Greek *rho*).
+In the CFA simulation, **measurement quality** is controlled by **item loadings**:
 
--   **Reliability** is formally defined as:
+-   Two factors **F1, F2** with covariance  
 
-    $$\rho = \frac{\text{Var(True score)}}{\text{Var(Observed score)}}$$
+    $$
+    \Sigma_F=\begin{pmatrix}1 & r_{F12}\\ r_{F12} & 1\end{pmatrix}
+    $$
 
-    -   ρ = 1.0 → predictors are measured without error (perfect reliability).\
-    -   ρ = 0.8 → 80% of observed variance reflects the true latent predictor, 20% is error variance.\
-    -   ρ = 0.6 → 60% is true signal, 40% is error.
+-   Six items **X1–X6** with simple structure loadings (.80, .70, .60).  
+    Residual variances are set so each item has variance ≈ 1: $\theta = 1 - \lambda^2$.
+-   Outcome **Y** is generated from the **true factors** with noise chosen to match a target latent $R^2$.
 
 ------------------------------------------------------------------------
 
@@ -111,112 +113,81 @@ This follows psychometric convention where reliability is expressed as ρ (Greek
 
 -   It estimates coefficients by minimizing the sum of squared residuals:
 
-    $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_pX_p + \varepsilon$$
+    $$
+    Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \dots + \beta_pX_p + \varepsilon
+    $$
 
--   Coefficients are estimated by minimizing the sum of squared residuals:
-
-    $$\text{minimize } \sum (Y - \hat{Y})^2$$
-
--   Interpretation of coefficients (from labs):
-
-    β₀ (intercept): expected outcome when predictors = 0.
-
-    β₁ (slope): expected difference in the outcome for a one-unit increase in a predictor, holding others constant
-
--   **In regression theory:** measurement error in predictors attenuates regression coefficients and lowers $R^2$.
-
--   **In SEM:** predictors are modeled as latent variables with explicit reliabilities; attenuation is represented in the measurement model.
-
--   **In this project:** OLS provides the baseline model because its behavior under measurement error is well understood.
+-   **In this project:**  
+    Because Y is generated linearly from the latent factors, OLS reflects the correct data-generating model.  
+    ML models (e.g., XGBoost) are compared to OLS to test robustness against different scoring strategies.
 
 ------------------------------------------------------------------------
 
 ### Evaluation Metrics
 
-Predictive performance is evaluated using two standard metrics: **Root Mean Squared Error (RMSE)** and the **Coefficient of Determination (R²)**.
+Predictive performance is evaluated using:
 
 -   **Root Mean Squared Error (RMSE):**
 
-    $$RMSE = \sqrt{\tfrac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2}$$
-
-    -   Represents the average prediction error, expressed in the same units as the outcome variable.
-    -   Larger errors are penalized more strongly due to squaring.
-    -   Lower RMSE indicates better predictive accuracy.
+    $$
+    RMSE = \sqrt{\tfrac{1}{n} \sum (y - \hat{y})^2}
+    $$
 
 -   **Coefficient of Determination (R²):**
 
-    $$R^2 = 1 - \tfrac{MSE}{Var(Y)}$$
-
-    -   Represents the proportion of variance in the outcome explained by predictions.
-    -   Values closer to 1 indicate stronger predictive performance.
-    -   Under measurement error, R² decreases systematically, regardless of sample size or model complexity.
-
-Together, RMSE and R² capture complementary aspects of model performance: - RMSE quantifies **absolute prediction error**. - R² quantifies **relative explanatory power**.
-
-Both metrics highlight the consequences of measurement error: even flexible machine learning models cannot achieve high predictive performance when predictor reliability is low.
+    $$
+    R^2 = 1 - \tfrac{MSE}{Var(Y)}
+    $$
 
 ------------------------------------------------------------------------
 
 ## Results & Interpretation
 
-The simulation study shows how **predictor reliability** ($\rho_{XX'}$) affects regression performance.
-
 ### Aggregated performance
 
-<img src="data/out/perf_grid_with_se.png" alt="Aggregated performance by reliability" width="600"/>
+<img src="data/out_cfa/perf_grid_with_se_cfa.png" alt="Aggregated performance by score type and model" width="700"/>
 
--   As reliability increases, **R² goes up** and **RMSE goes down**.
--   With $\rho = 0.6$, predictive R² is about 0.30 (weaker model, more error).
--   With $\rho = 1.0$, predictive R² approaches the latent target of 0.50.
+-   **OLS outperforms XGBoost** across all score types.
+-   **Items, sum scores, and factor scores** perform similarly in this simple design.
+-   **XGBoost shows higher error** and lower R², since the data-generating process is linear.
 
 ### Replicate-level distributions
 
 **Predictive R² across replicates:**
 
-<img src="data/out/perf_replicates_R2_jitter.png" alt="Replicate-level R² distribution" width="600"/>
+<img src="data/out_cfa/perf_replicates_R2_cfa.png" alt="Replicate-level R² distribution" width="600"/>
 
 **Predictive RMSE across replicates:**
 
-<img src="data/out/perf_replicates_RMSE_jitter.png" alt="Replicate-level RMSE distribution" width="600"/>
+<img src="data/out_cfa/perf_replicates_RMSE_cfa.png" alt="Replicate-level RMSE distribution" width="600"/>
 
--   Each dot is one simulated dataset (replicate).
--   Boxplots summarize the spread of results at each reliability.
--   Lower reliability produces more **attenuated R²** and higher **RMSE**.
--   With perfect reliability (ρ = 1.0), results are closest to the true latent model.
-
-------------------------------------------------------------------------
+-   OLS: higher, more stable R² and lower RMSE.
+-   XGBoost: lower and more variable results, especially with factor scores.
 
 ### Raincloud Plots: Distributions of Predictive Performance
 
-To visualize how predictive performance varies across simulation replicates, we use **raincloud plots**.\
-These combine a **density distribution (the “cloud”)**, a **boxplot** (median and interquartile range), and individual **jittered points** (each replicate).\
-This makes it easy to see both **average trends** and the **spread of outcomes** under different levels of predictor reliability.
+**Predictive R² rainclouds:**
 
--   **Predictive R² rainclouds:**
+<img src="data/out_cfa/perf_replicates_R2_raincloud_cfa.png" alt="Raincloud plot of R² across replicates" width="700"/>
 
-    <img src="data/out/perf_replicates_R2_raincloud.png" alt="Raincloud plot of R2 across replicates" width="700"/>
+-   **OLS distributions shifted upward**, showing stronger prediction.  
+-   **Sum scores ≈ items**, while factor scores add some instability.
 
-    -   At **ρ = 0.6**, distributions are shifted downward, showing that low reliability sharply limits variance explained.\
-    -   At **ρ = 1.0**, clouds shift upward, indicating stronger performance closer to the true latent model.\
+**Predictive RMSE rainclouds:**
 
+<img src="data/out_cfa/perf_replicates_RMSE_raincloud_cfa.png" alt="Raincloud plot of RMSE across replicates" width="700"/>
 
--   **Predictive RMSE rainclouds:**
-
-    <img src="data/out/perf_replicates_RMSE_raincloud.png" alt="Raincloud plot of RMSE across replicates" width="700"/>
-
-    -   RMSE decreases systematically as reliability improves, mirroring the R² pattern.\
-    -   Distributions are wider at low reliability, indicating instability across replicates.\
-
-**Interpretation:**\
-The plots highlight that **measurement error imposes a ceiling on predictive performance**.
+-   **Lower RMSE for OLS**, consistently across score types.  
+-   **XGBoost shows higher errors** and more variability.
 
 ------------------------------------------------------------------------
 
 ## Summary
 
-This project illustrates: **The maximum predictive performance is bounded by the reliability of the predictors.**
+This CFA simulation illustrates:
 
--   **In regression:** this is seen as *attenuation bias* - coefficients shrink and predictive power decreases when predictors are noisy.
--   **In ML:** the same limits apply - flexible models cannot exceed the information content of the observed data.
+-   **OLS dominates XGBoost** when the true relation is linear.  
+-   **Sum scores perform nearly as well as factor scores** in simple measurement structures.  
+-   **Measurement model quality bounds prediction**: predictive performance cannot exceed the information conveyed by the observed items.  
 
 ------------------------------------------------------------------------

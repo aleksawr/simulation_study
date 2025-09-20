@@ -25,8 +25,10 @@ if (!all(need %in% names(perf))) {
 }
 
 ## Order score types for nicer plotting
-score_levels <- c("items","sum","factor")
+
+score_levels <- c("items","sum","factor","all")
 perf$score_type <- factor(perf$score_type, levels = intersect(score_levels, unique(perf$score_type)))
+
 
 ## Device: prefer ragg if available (robust UTF-8)
 dev_fun <- if (requireNamespace("ragg", quietly = TRUE)) ragg::agg_png else grDevices::png
