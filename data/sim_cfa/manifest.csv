@@ -1,0 +1,11 @@
+"dataset_id","file_items","file_latent","N","r_F12","load_F1_1","load_F1_2","load_F1_3","load_F2_1","load_F2_2","load_F2_3","R2_target_Y","R2_emp_Y","sd_eps_Y","seed"
+"cfa_2x3_rep001","data/sim_cfa/cfa_2x3_rep001_items.csv","data/sim_cfa/cfa_2x3_rep001_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.336454869841533,1.06827302104141,1235
+"cfa_2x3_rep002","data/sim_cfa/cfa_2x3_rep002_items.csv","data/sim_cfa/cfa_2x3_rep002_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.308147146629133,1.03746622560888,1236
+"cfa_2x3_rep003","data/sim_cfa/cfa_2x3_rep003_items.csv","data/sim_cfa/cfa_2x3_rep003_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.315905312384025,1.03465042333264,1237
+"cfa_2x3_rep004","data/sim_cfa/cfa_2x3_rep004_items.csv","data/sim_cfa/cfa_2x3_rep004_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.311123269034557,1.05722033084482,1238
+"cfa_2x3_rep005","data/sim_cfa/cfa_2x3_rep005_items.csv","data/sim_cfa/cfa_2x3_rep005_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.327191486554665,1.01803863577369,1239
+"cfa_2x3_rep006","data/sim_cfa/cfa_2x3_rep006_items.csv","data/sim_cfa/cfa_2x3_rep006_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.305640163444198,1.01483647071251,1240
+"cfa_2x3_rep007","data/sim_cfa/cfa_2x3_rep007_items.csv","data/sim_cfa/cfa_2x3_rep007_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.303775133493579,1.02211288694033,1241
+"cfa_2x3_rep008","data/sim_cfa/cfa_2x3_rep008_items.csv","data/sim_cfa/cfa_2x3_rep008_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.333828491390444,0.968813394087167,1242
+"cfa_2x3_rep009","data/sim_cfa/cfa_2x3_rep009_items.csv","data/sim_cfa/cfa_2x3_rep009_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.328364951445294,1.07565316409532,1243
+"cfa_2x3_rep010","data/sim_cfa/cfa_2x3_rep010_items.csv","data/sim_cfa/cfa_2x3_rep010_latent.csv",1000,0.4,0.8,0.7,0.6,0.8,0.7,0.6,0.32,0.31168869569705,0.990294556863807,1244
